@@ -46,7 +46,25 @@ npm start
    - Interface: http://localhost:3000
    - Login: http://localhost:3000/login
 
-### Configuração Manual
+### Via SQLite (Desenvolvimento)
+
+Para desenvolvimento rápido sem Docker:
+
+1. Instale as dependências:
+```bash
+npm install sqlite3 bcryptjs jsonwebtoken
+```
+
+2. Inicie o servidor SQLite:
+```bash
+node start-sqlite.js
+```
+
+3. Acesse a aplicação:
+   - Interface: http://localhost:3000
+   - Login: http://localhost:3000/login
+
+### Configuração Manual (MySQL)
 
 1. Configure o banco de dados MySQL
 2. Crie o banco de dados `webssh_db`

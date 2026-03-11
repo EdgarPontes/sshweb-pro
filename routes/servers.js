@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
     const userId = req.user.userId;
     
     const servers = await query(
-      'SELECT id, name, host, port, username, created_at FROM servers WHERE user_id = ? ORDER BY created_at DESC',
+      'SELECT id, name, host, port, username, created_at FROM servers WHERE user_id = $1 ORDER BY created_at DESC',
       [userId]
     );
 
@@ -56,14 +56,14 @@ router.post('/', async (req, res) => {
 
     // Insere o novo servidor no banco de dados
     const result = await query(
-      'INSERT INTO servers (user_id, name, host, port, username, password) VALUES (?, ?, ?, ?, ?, ?)',
+      'INSERT INTO servers (user_id, name, host, port, username, password) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
       [userId, name, host, portNum, username, password]
     );
 
     res.status(201).json({
       success: true,
       message: 'Servidor adicionado com sucesso',
-      serverId: result.insertId
+      serverId: result[0].id
     });
 
   } catch (error) {
@@ -84,7 +84,7 @@ router.put('/:id', async (req, res) => {
 
     // Verifica se o servidor pertence ao usuário
     const serverCheck = await query(
-      'SELECT * FROM servers WHERE id = ? AND user_id = ?',
+      'SELECT * FROM servers WHERE id = $1 AND user_id = $2',
       [serverId, userId]
     );
 
@@ -106,7 +106,7 @@ router.put('/:id', async (req, res) => {
 
     // Atualiza o servidor
     await query(
-      'UPDATE servers SET name = ?, host = ?, port = ?, username = ?, password = ? WHERE id = ?',
+      'UPDATE servers SET name = $1, host = $2, port = $3, username = $4, password = $5 WHERE id = $6',
       [name, host, portNum, username, password, serverId]
     );
 
@@ -132,7 +132,7 @@ router.delete('/:id', async (req, res) => {
 
     // Verifica se o servidor pertence ao usuário
     const serverCheck = await query(
-      'SELECT * FROM servers WHERE id = ? AND user_id = ?',
+      'SELECT * FROM servers WHERE id = $1 AND user_id = $2',
       [serverId, userId]
     );
 
@@ -145,7 +145,7 @@ router.delete('/:id', async (req, res) => {
 
     // Exclui o servidor
     await query(
-      'DELETE FROM servers WHERE id = ?',
+      'DELETE FROM servers WHERE id = $1',
       [serverId]
     );
 
@@ -170,7 +170,7 @@ router.get('/:id', async (req, res) => {
     const serverId = req.params.id;
 
     const server = await query(
-      'SELECT id, name, host, port, username, created_at FROM servers WHERE id = ? AND user_id = ?',
+      'SELECT id, name, host, port, username, created_at FROM servers WHERE id = $1 AND user_id = $2',
       [serverId, userId]
     );
 

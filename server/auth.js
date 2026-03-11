@@ -22,7 +22,7 @@ async function registerUser(username, password) {
 
     // Insere o novo usuário no banco de dados
     await query(
-      'INSERT INTO users (username, password) VALUES (?, ?)',
+      'INSERT INTO users (username, password) VALUES ($1, $2)',
       [username, hashedPassword]
     );
 
@@ -36,7 +36,7 @@ async function registerUser(username, password) {
 async function loginUser(username, password) {
   try {
     // Busca o usuário no banco de dados
-    const users = await query('SELECT * FROM users WHERE username = ?', [username]);
+    const users = await query('SELECT * FROM users WHERE username = $1', [username]);
     
     if (users.length === 0) {
       throw new Error('Credenciais inválidas');
